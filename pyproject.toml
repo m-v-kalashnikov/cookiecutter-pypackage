@@ -32,6 +32,7 @@ pytest-cookies = "*"
 coverage = "*"
 pydocstyle = {version = "*", extras = ["toml"]}
 tox = "*"
+typer = {version = "*", extras = ["all"]}
 mkdocs = "*"
 mkdocs-autorefs = "*"
 mkdocs-material = "*"
