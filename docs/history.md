@@ -1,5 +1,9 @@
 # History
 
+## WIP
+* Remove `use_mypy` choice to make mypy required
+* Refactor  `cookiecutter-pypackage/pyproject.toml` and add favorite configurations there
+
 ## v1.1.1
 
 * Centralize most of the tool configuration in the `setup.cfg` file

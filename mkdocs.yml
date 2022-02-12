@@ -1,7 +1,7 @@
 site_name: Cookiecutter Pypackage
-site_url: https://www.waynerv.com/cookiecutter-pypackage
-repo_url: https://github.com/waynerv/cookiecutter-pypackage
-repo_name: waynerv/cookiecutter-pypackage
+site_url: https://m-v-kalashnikov.github.io/cookiecutter-pypackage
+repo_url: https://github.com/m-v-kalashnikov/cookiecutter-pypackage
+repo_name: m-v-kalashnikov/cookiecutter-pypackage
 nav:
   - Introduction: index.md
   - Tutorial: tutorial.md
@@ -14,10 +14,21 @@ theme:
   name: material
   language: en
   #logo: assets/logo.png
+#  palette:
+#      scheme: preference
+#      primary: black
+#      accent: pink
   palette:
-      scheme: preference
-      primary: indigo
-      accent: indigo
+    - scheme: default
+      primary: black
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: black
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
   features:
     - navigation.indexes
     - navigation.instant
@@ -43,7 +54,7 @@ plugins:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/waynerv
+      link: https://github.com/m-v-kalashnikov
       name: Github
     - icon: material/email
-      link: "mailto:ampedee@gmail.com"
+      link: "mailto:kalashnikovsystem@gmail.com"

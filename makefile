@@ -1,7 +1,7 @@
-sources = {{ cookiecutter.pkg_name }}
+sources = hooks
 
 .PHONY: test format lint unittest coverage pre-commit clean
-test: format lint unittest
+test: format lint tox
 
 format:
 	@echo "Run isort"
@@ -23,16 +23,16 @@ lint:
 	@echo "_____"
 
 unittest:
-	poetry run pytest
+	poetry run pytest --ignore={{cookiecutter.project_slug}}
 
-coverage:
-	poetry run pytest --cov=$(sources) --cov-branch --cov-report=term-missing tests
-
-pre-commit:
-	poetry run pre-commit run --all-files
+tox:
+	@echo "Run yox"
+	poetry run tox
+	@echo "_____"
 
 clean:
-	rm -rf **/.mypy_cache **/.pytest_cache
+	rm -rf .mypy_cache **/.mypy_cache
+	rm -rf .pytest_cache **/.pytest_cache
 	rm -rf *.egg-info
 	rm -rf .tox dist site
 	rm -rf coverage.xml .coverage

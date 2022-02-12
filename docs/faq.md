@@ -60,14 +60,9 @@
     version
     The starting version number of the package.
 
-    use_mypy
-    If use mypy for static type check in pre-commit hooks and tox.
 
     install_precommit_hooks
     If you choose yes, then cookiecutter will install pre-commit hooks for you.
-
-    docstrings_style
-    one of `google, numpy, pep257`. It's required by flake8-docstrings.
 
     ## Options
 
@@ -75,9 +70,8 @@
     for your project.
 
     command_line_interface
-    Whether to create a console script using Python Click. Console script
-    entry point will match the project_slug. Options: \['click', "No
-    command-line interface"\]
+    Whether to create a console script using Python Typer. Console script
+    entry point will match the project_slug.
     ```
 
     except above settings, for CI/CD, you'll also need configure gitub repsitory secrets

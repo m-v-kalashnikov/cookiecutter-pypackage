@@ -1,15 +1,20 @@
 """Console script for {{cookiecutter.pkg_name}}."""
 
-{% if cookiecutter.command_line_interface|lower == 'click' -%}
-import click
+{% if cookiecutter.command_line_interface|lower == 'y' -%}
+import typer
+
+main = typer.Typer()
 
 
-@click.command()
-def main():
+@main.command()
+def run() -> None:
     """Main entrypoint."""
-    click.echo("{{ cookiecutter.project_slug }}")
-    click.echo("=" * len("{{ cookiecutter.project_slug }}"))
-    click.echo("{{ cookiecutter.project_short_description }}")
+    typer.secho("{{ cookiecutter.project_slug }}", fg=typer.colors.BRIGHT_WHITE)
+    typer.secho("=" * len("{{ cookiecutter.project_slug }}"), fg=typer.colors.BRIGHT_WHITE)
+    typer.secho(
+        "{{ cookiecutter.project_short_description }}",
+        fg=typer.colors.BRIGHT_WHITE,
+    )
 
 
 if __name__ == "__main__":

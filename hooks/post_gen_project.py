@@ -1,67 +1,72 @@
-#!/usr/bin/env python
+"""Post gen hooks."""
+
 import os
+import shlex
 import subprocess
 import sys
+from contextlib import contextmanager
+from pathlib import Path
+from typing import Generator
 
-PROJECT_DIRECTORY = os.path.realpath(os.path.curdir)
-
-
-def remove_file(filepath):
-    try:
-        os.remove(os.path.join(PROJECT_DIRECTORY, filepath))
-    except FileNotFoundError:
-        pass
+PROJECT_DIRECTORY = Path.cwd()
 
 
-def execute(*args, supress_exception = False, cwd=None):
-    cur_dir = os.getcwd()
+@contextmanager
+def inside_dir(dir_path: Path) -> Generator[None, None, None]:
+    """Execute code from inside the given directory."""
+    old_path = Path.cwd()
 
     try:
-        if cwd:
-            os.chdir(cwd)
-
-        proc = subprocess.Popen(args, stdout = subprocess.PIPE, stderr= subprocess.PIPE)
-
-        out, err = proc.communicate()
-        out = out.decode('utf-8')
-        err = err.decode('utf-8')
-        if err and not supress_exception:
-            raise Exception(err)
-        else:
-            return out
+        os.chdir(dir_path)
+        yield
     finally:
-        os.chdir(cur_dir)
+        os.chdir(old_path)
 
 
-def init_git():
-    # workaround for issue #1
-    if not os.path.exists(os.path.join(PROJECT_DIRECTORY, ".git")):
-        execute("git", "config", "--global", "init.defaultBranch", "main", cwd = PROJECT_DIRECTORY)
-        execute("git", "init", cwd=PROJECT_DIRECTORY)
+def run_inside_dir(commands: list[str] | tuple[str], dir_path: Path) -> None:
+    """Run a commands from inside a given directory."""
+    with inside_dir(dir_path):
+        for command in commands:
+            subprocess.check_call(shlex.split(command))
 
 
-def install_pre_commit_hooks():
-    execute(sys.executable, "-m", "pip", "install", "pre-commit==2.12.0")
-    execute(sys.executable, "-m", "pre_commit", "install")
+def init_git() -> None:
+    """Initialize git in generated project."""
+    git = PROJECT_DIRECTORY / ".git"
+
+    if not git.is_dir():
+        run_inside_dir(
+            commands=[
+                "git config --global init.defaultBranch main",
+                "git init",
+            ],
+            dir_path=PROJECT_DIRECTORY,
+        )
 
 
-if __name__ == '__main__':
+def install_pre_commit_hooks() -> None:
+    """Install pre-commit."""
+    run_inside_dir(
+        commands=[
+            f"{sys.executable} -m pip install --upgrade --no-input --quiet pip",
+            f"{sys.executable} -m pip install --upgrade --no-input --quiet pre-commit",
+            f"{sys.executable} -m pre_commit install",
+        ],
+        dir_path=PROJECT_DIRECTORY,
+    )
 
-    if 'no' in '{{ cookiecutter.command_line_interface|lower }}':
-        cli_file = os.path.join('{{ cookiecutter.pkg_name }}', 'cli.py')
-        remove_file(cli_file)
 
-    if 'Not open source' == '{{ cookiecutter.open_source_license }}':
-        remove_file('LICENSE')
+if __name__ == "__main__":
 
-    try:
-        init_git()
-    except Exception as e:
-        print(e)
+    if "{{ cookiecutter.command_line_interface|lower }}" != "y":
+        cli_file = PROJECT_DIRECTORY / "{{ cookiecutter.pkg_name }}/cli.py"
+        cli_file.unlink(missing_ok=True)
 
-    if '{{ cookiecutter.install_precommit_hooks }}' == 'y':
-        try:
-            install_pre_commit_hooks()
-        except Exception as e:
-            print(str(e))
-            print("Failed to install pre-commit hooks. Please run `pre-commit install` by your self. For more on pre-commit, please refer to https://pre-commit.com")
+    if "{{ cookiecutter.open_source_license|lower }}" == "not open source":
+        license_file = PROJECT_DIRECTORY / "LICENSE"
+        license_file.unlink(missing_ok=True)
+
+    init_git()
+
+    if "{{ cookiecutter.install_precommit_hooks|lower }}" == "y":
+        install_pre_commit_hooks()
