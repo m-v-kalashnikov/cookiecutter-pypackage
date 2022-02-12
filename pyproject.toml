@@ -120,7 +120,7 @@ deps =
     poetry
 setenv =
     PYTHONPATH = {toxinidir}
-commands = poetry run pytest --cov-report=term-missing tests
+commands = poetry run pytest --cov=$(sources) --cov-branch --cov-report=term-missing tests
 commands_pre = poetry update && poetry install
 """
 
